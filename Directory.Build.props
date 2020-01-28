@@ -1,0 +1,16 @@
+<!-- WARNING: This is a generated file, please do not check it in! -->
+<Project>
+  <PropertyGroup>
+    <!-- Note: build.py puts the CMake binary directory under an additional directory named for the build
+               configuration, so we want the parent directory here. -->
+    <OnnxRuntimeBuildDirectory>C:/git/oss/onnxruntime/build/Windows/Debug/..</OnnxRuntimeBuildDirectory>
+    
+    <OnnxRuntimeCsharpRoot>$(MSBuildThisDirectory)</OnnxRuntimeCsharpRoot>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)\packages</RestorePackagesPath>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)\NuGet.CSharp.config</RestoreConfigFile>
+    <MSBuildWarningsAsMessages>NU1503</MSBuildWarningsAsMessages>
+    <RestoreIgnoreFailedSource>true</RestoreIgnoreFailedSource>
+
+    <DefineConstants>USE_CUDA,USE_TENSORRT,$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+</Project>
