@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Platforms>AnyCPU;x86</Platforms>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <OnnxRuntimeCsharpRoot>..\..</OnnxRuntimeCsharpRoot>
+    <OnnxRuntimeBuildDirectory Condition="'$(OnnxRuntimeBuildDirectory)'==''">$(OnnxRuntimeCsharpRoot)\..\build\Windows</OnnxRuntimeBuildDirectory>
+    <NativeBuildOutputDir>$(OnnxRuntimeBuildDirectory)\$(Configuration)\$(Configuration)</NativeBuildOutputDir>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(NativeBuildOutputDir)\onnxruntime.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+    <None Include="$(NativeBuildOutputDir)\onnxruntime.pdb" Condition="Exists('$(NativeBuildOutputDir)\onnxruntime.pdb')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+    <None Include="$(NativeBuildOutputDir)\dnnl.dll" Condition="Exists('$(NativeBuildOutputDir)\dnnl.dll')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+    <None Include="$(OnnxRuntimeCSharpRoot)\testdata\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(OnnxRuntimeCSharpRoot)\src\Microsoft.ML.OnnxRuntime\Microsoft.ML.OnnxRuntime.csproj" />
+    <PackageReference Include="CommandLineParser" Version="2.4.3" />
+  </ItemGroup>
+
+
+</Project>
