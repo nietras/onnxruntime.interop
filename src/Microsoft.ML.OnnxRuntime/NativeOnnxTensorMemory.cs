@@ -107,8 +107,10 @@ namespace Microsoft.ML.OnnxRuntime
             }
             catch (Exception e)
             {
-                //TODO: cleanup any partially created state
-                //Do not call ReleaseTensor here. If the constructor has thrown exception, then this NativeOnnxTensorWrapper is not created, so caller should take appropriate action to dispose
+                // TODO: cleanup any partially created state
+                // Do not call ReleaseTensor here. If the constructor has thrown exception,
+                // then this NativeOnnxTensorWrapper is not created, so caller should take
+                // appropriate action to dispose
                 throw e;
             }
             finally
