@@ -129,7 +129,7 @@ namespace Microsoft.ML.OnnxRuntime
         public IntPtr ReleaseCustomOpDomain;
     }
 
-    internal static class NativeMethods
+    public static class NativeMethods
     {
         private const string nativeLib = "onnxruntime";
         internal const CharSet charSet = CharSet.Ansi;
@@ -154,6 +154,7 @@ namespace Microsoft.ML.OnnxRuntime
             OrtCreateSession = (DOrtCreateSession)Marshal.GetDelegateForFunctionPointer(api_.CreateSession, typeof(DOrtCreateSession));
             OrtCreateSessionFromArray = (DOrtCreateSessionFromArray)Marshal.GetDelegateForFunctionPointer(api_.CreateSessionFromArray, typeof(DOrtCreateSessionFromArray));
             OrtRun = (DOrtRun)Marshal.GetDelegateForFunctionPointer(api_.Run, typeof(DOrtRun));
+            OrtRunFast = (DOrtRunFast)Marshal.GetDelegateForFunctionPointer(api_.Run, typeof(DOrtRunFast));
             OrtSessionGetInputCount = (DOrtSessionGetInputCount)Marshal.GetDelegateForFunctionPointer(api_.SessionGetInputCount, typeof(DOrtSessionGetInputCount));
             OrtSessionGetOutputCount = (DOrtSessionGetOutputCount)Marshal.GetDelegateForFunctionPointer(api_.SessionGetOutputCount, typeof(DOrtSessionGetOutputCount));
             OrtSessionGetOverridableInitializerCount = (DOrtSessionGetOverridableInitializerCount)Marshal.GetDelegateForFunctionPointer(api_.SessionGetOverridableInitializerCount, typeof(DOrtSessionGetOverridableInitializerCount));
@@ -283,6 +284,18 @@ namespace Microsoft.ML.OnnxRuntime
                                                 IntPtr[] outputValues /* An array of output value pointers. Array must be allocated by the caller */
                                                 );
         public static DOrtRun OrtRun;
+
+        public unsafe delegate IntPtr /*(ONNStatus*)*/ DOrtRunFast(
+                                                IntPtr /*(OrtSession*)*/ session,
+                                                IntPtr /*(OrtSessionRunOptions*)*/ runOptions,  // can be null to use the default options
+                                                string[] inputNames,
+                                                IntPtr* /* (OrtValue*[])*/ inputValues,
+                                                UIntPtr inputCount,
+                                                string[] outputNames,
+                                                UIntPtr outputCount,
+                                                IntPtr* outputValues /* An array of output value pointers. Array must be allocated by the caller */
+                                                );
+        public static DOrtRunFast OrtRunFast;
 
         public delegate IntPtr /*(OrtStatus*)*/ DOrtSessionGetInputCount(
                                                 IntPtr /*(OrtSession*)*/ session,
@@ -572,11 +585,11 @@ namespace Microsoft.ML.OnnxRuntime
                         out IntPtr /* OrtValue** */ outputValue);
         public static DOrtCreateTensorAsOrtValue OrtCreateTensorAsOrtValue;
 
-        public delegate IntPtr /* OrtStatus */ DOrtCreateTensorWithDataAsOrtValue(
+        public unsafe delegate IntPtr /* OrtStatus */ DOrtCreateTensorWithDataAsOrtValue(
                                                         IntPtr /* (const OrtMemoryInfo*) */ allocatorInfo,
                                                         IntPtr /* (void*) */dataBufferHandle,
                                                         UIntPtr dataLength,
-                                                        long[] shape,
+                                                        long* shape,
                                                         UIntPtr shapeLength,
                                                         TensorElementType type,
                                                         out IntPtr /* OrtValue** */ outputValue);
@@ -591,7 +604,7 @@ namespace Microsoft.ML.OnnxRuntime
         /// \param len total data length, not including the trailing '\0' chars.
         public delegate IntPtr /*(OrtStatus*)*/ DOrtFillStringTensor(
                                                         IntPtr /* OrtValue */ value,
-                                                        IntPtr[] /* const char* const* */s,
+                                                        string[] /* const char* const* */s,
                                                         UIntPtr /* size_t */ s_len);
         public static DOrtFillStringTensor OrtFillStringTensor;
 
@@ -624,9 +637,9 @@ namespace Microsoft.ML.OnnxRuntime
         public delegate IntPtr /*(OrtStatus*)*/ DOrtGetDimensionsCount(IntPtr /*(const struct OrtTensorTypeAndShapeInfo*)*/ typeAndShapeInfo, out UIntPtr output);
         public static DOrtGetDimensionsCount OrtGetDimensionsCount;
 
-        public delegate IntPtr /*(OrtStatus*)*/ DOrtGetDimensions(
+        public unsafe delegate IntPtr /*(OrtStatus*)*/ DOrtGetDimensions(
                             IntPtr /*(const struct OrtTensorTypeAndShapeInfo*)*/ typeAndShapeInfo,
-                            long[] dim_values,
+                            long* dim_values,
                             UIntPtr dim_values_length);
         public static DOrtGetDimensions OrtGetDimensions;
 

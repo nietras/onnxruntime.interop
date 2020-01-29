@@ -71,7 +71,7 @@ namespace Microsoft.ML.OnnxRuntime
         /// </summary>
         /// <param name="onnxValue"></param>
         /// <param name="pinnedMemoryHandle"></param>
-        internal void ToNativeOnnxValue(out IntPtr onnxValue, out MemoryHandle pinnedMemoryHandle)
+        unsafe internal void ToNativeOnnxValue(out IntPtr onnxValue, out MemoryHandle pinnedMemoryHandle)
         {
             //try to cast _value to Tensor<T>
             TensorElementType nativeElementType = TensorElementType.DataTypeMax; //invalid
@@ -218,31 +218,12 @@ namespace Microsoft.ML.OnnxRuntime
                                                     ));
 
                     // fill the native tensor, using GetValue(index) from the Tensor<string>
-                    var len = tensorValue.Length;
-                    var stringsInTensor = new IntPtr[len];
-                    var pinnedHandles = new GCHandle[len + 1];
-                    pinnedHandles[len] = GCHandle.Alloc(stringsInTensor, GCHandleType.Pinned);
-                    try
+                    string[] stringsInTensor = new string[tensorValue.Length];
+                    for (int i = 0; i < tensorValue.Length; i++)
                     {
-                        for (int i = 0; i < len; i++)
-                        {
-                            var utf8str = UTF8Encoding.UTF8.GetBytes(tensorValue.GetValue(i) + "\0");
-                            pinnedHandles[i] = GCHandle.Alloc(utf8str, GCHandleType.Pinned);
-                            stringsInTensor[i] = pinnedHandles[i].AddrOfPinnedObject();
-                        }
-
-                        NativeApiStatus.VerifySuccess(NativeMethods.OrtFillStringTensor(nativeTensor, stringsInTensor, (UIntPtr)len));
+                        stringsInTensor[i] = tensorValue.GetValue(i);
                     }
-                    finally
-                    {
-                        foreach (var handle in pinnedHandles)
-                        {
-                            if (handle.IsAllocated)
-                            {
-                                handle.Free();
-                            }
-                        }
-                    }
+                    NativeApiStatus.VerifySuccess(NativeMethods.OrtFillStringTensor(nativeTensor, stringsInTensor, (UIntPtr)tensorValue.Length));
                 }
                 catch (OnnxRuntimeException e)
                 {
@@ -261,7 +242,7 @@ namespace Microsoft.ML.OnnxRuntime
                 Debug.Assert(dataBufferPointer != IntPtr.Zero, "dataBufferPointer must be non-null after obtaining the pinned buffer");
 
                 // copy to an ulong[] shape to match size_t[]
-                long[] longShape = new long[rank];
+                var longShape = stackalloc long[rank];
                 for (int i = 0; i < rank; i++)
                 {
                     longShape[i] = shape[i];
@@ -412,7 +393,7 @@ namespace Microsoft.ML.OnnxRuntime
 
     }
 
-    internal enum TensorElementType
+    public enum TensorElementType
     {
         Float = 1,
         UInt8 = 2,
