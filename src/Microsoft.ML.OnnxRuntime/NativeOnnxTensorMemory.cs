@@ -23,7 +23,7 @@ namespace Microsoft.ML.OnnxRuntime
         private int _elementWidth;
         private int[] _dimensions;
 
-        public NativeOnnxTensorMemory(IntPtr onnxValueHandle)
+        public unsafe NativeOnnxTensorMemory(IntPtr onnxValueHandle)
         {
             IntPtr typeAndShape = IntPtr.Zero;
             try
@@ -56,7 +56,7 @@ namespace Microsoft.ML.OnnxRuntime
                     throw new NotSupportedException("Symbolic dimensions in the tensor is not supported");
                 }
 
-                long[] shape = new long[dimension.ToUInt64()];
+                long* shape = stackalloc long[(int)dimension.ToUInt64()];
                 unsafe
                 {
                     NativeApiStatus.VerifySuccess(NativeMethods.OrtGetDimensions(typeAndShape, shape, new UIntPtr(&dimension))); //Note: shape must be alive during the call
@@ -107,10 +107,10 @@ namespace Microsoft.ML.OnnxRuntime
             }
             catch (Exception e)
             {
-                //TODO: cleanup any partially created state
-                //Do not call ReleaseTensor here. If the constructor has thrown exception, 
-                //then this NativeOnnxTensorWrapper is not created, so caller should take 
-                //appropriate action to dispose
+                // TODO: cleanup any partially created state
+                // Do not call ReleaseTensor here. If the constructor has thrown exception,
+                // then this NativeOnnxTensorWrapper is not created, so caller should take
+                // appropriate action to dispose
                 throw e;
             }
             finally

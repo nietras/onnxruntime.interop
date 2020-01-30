@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.ML.OnnxRuntime
 {
-    class NativeApiStatus
+    public class NativeApiStatus
     {
-        private static string GetErrorMessage(IntPtr /*(ONNXStatus*)*/status)
+        public static string GetErrorMessage(IntPtr /*(ONNXStatus*)*/status)
         {
             IntPtr nativeString = NativeMethods.OrtGetErrorMessage(status);
             string str = Marshal.PtrToStringAnsi(nativeString); //assumes charset = ANSI

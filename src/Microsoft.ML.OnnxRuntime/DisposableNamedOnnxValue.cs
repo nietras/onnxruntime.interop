@@ -17,6 +17,12 @@ namespace Microsoft.ML.OnnxRuntime
     internal class DisposableList<T> : List<T>, IDisposableReadOnlyCollection<T>
         where T : IDisposable
     {
+        public DisposableList()
+        { }
+        
+        public DisposableList(int capacity)
+            : base(capacity)
+        { }
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -142,7 +148,7 @@ namespace Microsoft.ML.OnnxRuntime
             IntPtr allocator = IntPtr.Zero;
             NativeApiStatus.VerifySuccess(NativeMethods.OrtGetAllocatorWithDefaultOptions(out allocator));
             var ret = CreateFromOnnxValue(name, nativeOnnxValue, allocator);
-            return (DisposableNamedOnnxValue)ret;
+            return ret;
         }
 
         internal static DisposableNamedOnnxValue CreateFromOnnxValue(string name, IntPtr nativeOnnxValue, IntPtr allocator)

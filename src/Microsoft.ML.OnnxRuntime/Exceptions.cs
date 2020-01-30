@@ -11,7 +11,7 @@ namespace Microsoft.ML.OnnxRuntime
     /// <summary>
     /// Enum conresponding to native onnxruntime error codes. Must be in sync with the native API
     /// </summary>
-    internal enum ErrorCode
+    public enum ErrorCode
     {
         Ok = 0,
         Fail = 1,
