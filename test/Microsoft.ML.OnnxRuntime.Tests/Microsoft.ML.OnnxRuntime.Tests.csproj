@@ -7,8 +7,8 @@
     <Platforms>AnyCPU;x86</Platforms>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <OnnxRuntimeBuildDirectory Condition="'$(OnnxRuntimeBuildDirectory)'==''">$(OnnxRuntimeCsharpRoot)\..\build\Windows</OnnxRuntimeBuildDirectory>
-    <ProtocDirectory>$(OnnxRuntimeBuildDirectory)\$(Configuration)\external\protobuf\cmake\$(Configuration)</ProtocDirectory>
-    <ProtoSrc>$(OnnxRuntimeCsharpRoot)\..\onnxruntime\core\protobuf</ProtoSrc>
+    <!--<ProtocDirectory>$(OnnxRuntimeBuildDirectory)\$(Configuration)\external\protobuf\cmake\$(Configuration)</ProtocDirectory>
+    <ProtoSrc>$(OnnxRuntimeCsharpRoot)\..\onnxruntime\core\protobuf</ProtoSrc>-->
     <NativeBuildOutputDir>$(OnnxRuntimeBuildDirectory)\$(Configuration)\$(Configuration)</NativeBuildOutputDir>
 
     <!-- following attributes were necessary for the migrated Tensor tests -->  
@@ -16,7 +16,6 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SignAssembly>true</SignAssembly> <!-- need signing for friend access to the internals of the Tensors assembly -->
     <DelaySign>false</DelaySign>
-    <AssemblyOriginatorKeyFile>..\..\OnnxRuntime.snk</AssemblyOriginatorKeyFile>
     <!-- end -->
   </PropertyGroup>
 
@@ -57,9 +56,9 @@
     <ProjectReference Include="$(OnnxRuntimeCsharpRoot)\src\Microsoft.ML.OnnxRuntime\Microsoft.ML.OnnxRuntime.csproj" />
   </ItemGroup>
 
-  <Target Name="ProtoGen" BeforeTargets="Build">
-    <Exec Command="$(ProtocDirectory)\protoc.exe  -I=$(ProtoSrc) --csharp_out=. $(ProtoSrc)\onnx-ml.proto3" ContinueOnError="false"></Exec>
-  </Target>
+  <!--<Target Name="ProtoGen" BeforeTargets="Build">
+    <Exec Command="$(ProtocDirectory)\protoc.exe  -I=$(ProtoSrc) XX(replace XX with two line)csharp_out=. $(ProtoSrc)\onnx-ml.proto3" ContinueOnError="false"></Exec>
+  </Target>-->
 
   <ItemGroup>
     <None Include="$(NativeBuildOutputDir)\*.dll;$(NativeBuildOutputDir)\*.pdb;$(NativeBuildOutputDir)\libcustom*.so;$(NativeBuildOutputDir)\libcustom*.dylib">
@@ -71,7 +70,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>false</Visible>
     </None>
-    <None Include="$(OnnxRuntimeCSharpRoot)\..\onnxruntime\test\testdata\overridable_initializer.onnx">
+    <!--<None Include="$(OnnxRuntimeCSharpRoot)\..\onnxruntime\test\testdata\overridable_initializer.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>false</Visible>
     </None>
@@ -82,7 +81,7 @@
     <None Include="$(OnnxRuntimeCSharpRoot)\..\onnxruntime\test\testdata\custom_op_library\custom_op_test.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Visible>false</Visible>
-    </None>
+    </None>-->
     <BuildEnvVars Include="OnnxRuntimeBuildDirectory=$(OnnxRuntimeBuildDirectory)" />
   </ItemGroup>
 
