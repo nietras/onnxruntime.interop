@@ -28,6 +28,11 @@ For parameters see https://github.com/microsoft/onnxruntime/blob/master/tools/ci
 ./build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --use_tensorrt --tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11 --use_dnnl
 ```
 
+`--cuda_version 10.1´ due to cmake issues see below.
+```
+build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.1 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --use_tensorrt --tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11 --use_dnnl
+```
+
 ## CUDA 10.2 Issues
 https://github.com/microsoft/onnxruntime/issues/1859#issuecomment-581390245
 switch to 10.1 but supply the 10.2 path, then fix delay loading...
