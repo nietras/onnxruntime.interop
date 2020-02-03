@@ -12,7 +12,7 @@
      * 7.0.0.11: Windows 10 https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/7.0/7.0.0.11/zips/TensorRT-7.0.0.11.Windows10.x86_64.cuda-10.2.cudnn7.6.zip or Linux https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/7.0/7.0.0.11/tars/TensorRT-7.0.0.11.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn7.6.tar.gz 
      * 
    * `--use_tensorrt`
-   * `--tensorrt_home C:\git\nvidia\TensorRT-6.0.1.5`
+   * `--tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11`
  * DNNL
    * `--use_dnnl` (seems like onnx runtime then downloads source) otherwise see below.
    * Download latest binaries from https://github.com/intel/mkl-dnn/releases
@@ -25,8 +25,27 @@
 In ONNX runtime directory e.g. `C:\git\oss\onnxruntime` run the following from **Developer Command Prompt for VS 2017**:
 For parameters see https://github.com/microsoft/onnxruntime/blob/master/tools/ci_build/build.py
 ```
-./build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --tensorrt_home C:\git\nvidia\TensorRT-6.0.1.5 --use_tensorrt --use_dnnl
+./build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --use_tensorrt --tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11 --use_dnnl
 ```
+
+## CUDA 10.2 Issues
+https://github.com/microsoft/onnxruntime/issues/1859#issuecomment-581390245
+switch to 10.1 but supply the 10.2 path, then fix delay loading...
+
+These issue seem to relate to VS2017 shipping with an old CMake version (in **Developer Command Prompt for VS 2017**):
+```
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cmake --version
+cmake version 3.12.18081601-MSVC_2
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+```
+Ways to override can be seen at:
+https://stackoverflow.com/questions/49221297/use-installed-cmake-instead-of-embedded-one-in-visual-studio-2017
+Which suggest replacing build in:
+```
+ren "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake" _CMake
+mklink /d "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake" "C:\Program Files\CMake"
+```
+
 ## Delay Load Issues
 Delay loading does not always appear to have been defined correctly (possible due to build script issues/lack of specifying appropriate version etc.):
 ```
