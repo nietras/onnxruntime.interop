@@ -1,0 +1,37 @@
+# Windows for C#
+
+ * CUDA/cuDNN
+   * CUDA https://developer.nvidia.com/cuda-downloads e.g. http://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe
+   * `--cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2"`
+   * cuDNN https://developer.nvidia.com/cudnn this requires membership unfortunately but e.g. https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.2_20191118/cudnn-10.2-windows10-x64-v7.6.5.32.zip for Windows 10 or https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.2_20191118/cudnn-10.2-windows7-x64-v7.6.5.32.zip or Linux (general release) https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.2_20191118/cudnn-10.2-linux-x64-v7.6.5.32.tgz
+   * Extract to some folder (here named `cuda` change to `cudnn`)
+   * `--cudnn_home C:\git\nvidia\cuda` 
+ * TensorRT
+   * https://developer.nvidia.com/tensorrt this requires membership too.
+     * 6.0.1.5: Windows 10 https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/6.0/GA_6.0.1.5/zips/TensorRT-6.0.1.5.Windows10.x86_64.cuda-10.1.cudnn7.6.zip or Linux https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/6.0/GA_6.0.1.8/tars/TensorRT-6.0.1.8.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn7.6.tar.gz 
+     * 7.0.0.11: Windows 10 https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/7.0/7.0.0.11/zips/TensorRT-7.0.0.11.Windows10.x86_64.cuda-10.2.cudnn7.6.zip or Linux https://developer.nvidia.com/compute/machine-learning/tensorrt/secure/7.0/7.0.0.11/tars/TensorRT-7.0.0.11.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn7.6.tar.gz 
+     * 
+   * `--use_tensorrt`
+   * `--tensorrt_home C:\git\nvidia\TensorRT-6.0.1.5`
+ * DNNL
+   * `--use_dnnl` (seems like onnx runtime then downloads source) otherwise see below.
+   * Download latest binaries from https://github.com/intel/mkl-dnn/releases
+   * We choose vcomp here for **Microsoft Visual C OpenMP runtime** e.g.
+     `dnnl_win_1.2.0_cpu_vcomp.zip`
+   * Extract to e.g. `C:\git\intel\dnnl_win_1.2.0_cpu_vcomp`
+
+ * Add `--skip_submodule_sync` if sub-modules already synced.
+
+In ONNX runtime directory e.g. `C:\git\oss\onnxruntime` run the following from **Developer Command Prompt for VS 2017**:
+For parameters see https://github.com/microsoft/onnxruntime/blob/master/tools/ci_build/build.py
+```
+./build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --tensorrt_home C:\git\nvidia\TensorRT-6.0.1.5 --use_tensorrt --use_dnnl
+```
+## Delay Load Issues
+Delay loading does not always appear to have been defined correctly (possible due to build script issues/lack of specifying appropriate version etc.):
+```
+LINK : warning LNK4199: /DELAYLOAD:cudart64_102.dll ignored; no imports found from cudart64_102.dll [C:\git\oss\onnxruntime\build\Windows\RelWithDebInfo\onn
+xruntime.vcxproj]
+LINK : error LNK1218: warning treated as error; no output file generated [C:\git\oss\onnxruntime\build\Windows\RelWithDebInfo\onnxruntime.vcxproj]`
+```
+Overall we want to delay load any dlls from a specific execution provider, to allow onnxruntime.dll to run without them.
