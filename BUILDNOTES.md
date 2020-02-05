@@ -21,6 +21,7 @@
    * Extract to e.g. `C:\git\intel\dnnl_win_1.2.0_cpu_vcomp`
 
  * Add `--skip_submodule_sync` if sub-modules already synced.
+ * Add `--skip_tests` if skipping tests that can take a long time.
 
 In ONNX runtime directory e.g. `C:\git\oss\onnxruntime` run the following from **Developer Command Prompt for VS 2017**:
 For parameters see https://github.com/microsoft/onnxruntime/blob/master/tools/ci_build/build.py
@@ -30,7 +31,7 @@ For parameters see https://github.com/microsoft/onnxruntime/blob/master/tools/ci
 
 VS2019
 ```
-C:\git\oss\ort>build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --use_tensorrt --tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11 --use_dnnl --cmake_generator "Visual Studio 16 2019"
+C:\git\oss\ort>build.bat  --cmake_path "C:\Program Files\CMake\bin\cmake.exe" --config RelWithDebInfo --build_shared_lib --build_csharp --parallel --use_cuda --cuda_version 10.2 --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2" --cudnn_home C:\git\nvidia\cuda --use_tensorrt --tensorrt_home C:\git\nvidia\TensorRT-7.0.0.11 --use_dnnl --cmake_generator "Visual Studio 16 2019" --skip_tests
 ```
 
 `--cuda_version 10.1´ due to cmake issues see below.
